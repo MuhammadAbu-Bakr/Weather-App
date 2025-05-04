@@ -5,7 +5,14 @@ import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
 
+
 void main() async {
+  final apiService = ApiService();
+  final locationService = LocationService();
+  final weatherRepository = WeatherRepository(
+    apiService: apiService,
+    locationService: locationService,
+  );
   await dotenv.load(fileName: ".env");
   runApp(WeatherApp());
 }
