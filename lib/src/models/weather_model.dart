@@ -62,4 +62,6 @@ class WeatherForecast {
       humidity: json['main']['humidity'],
     );
   }
+
+  String get iconUrl => 'https://openweathermap.org/img/wn/$icon@2x.png';
 }

@@ -1,9 +1,11 @@
 import 'package:geolocator/geolocator.dart';
 import '../models/weather_model.dart';
 import 'weather_service.dart';
+import 'location_service.dart';
 
 class WeatherRepository {
   final WeatherService _weatherService = WeatherService();
+  final LocationService _locationService = LocationService();
 
   Future<WeatherModel> getWeatherByCity(String city) async {
     final data = await _weatherService.getWeatherByCity(city);
@@ -11,12 +13,20 @@ class WeatherRepository {
   }
 
   Future<WeatherModel> getWeatherByCurrentLocation() async {
-    final position = await getCurrentLocation();
+    final position = await _locationService.getCurrentLocation();
     final data = await _weatherService.getWeatherByLocation(
       position.latitude,
       position.longitude,
     );
     return WeatherModel.fromJson(data);
+  }
+
+  Future<List<WeatherForecast>> getForecast() async {
+    final position = await _locationService.getCurrentLocation();
+    final data = await _weatherService.getForecast(
+      '${position.latitude},${position.longitude}',
+    );
+    return data.map((item) => WeatherForecast.fromJson(item)).toList();
   }
 
   Future<Position> getCurrentLocation() async {
