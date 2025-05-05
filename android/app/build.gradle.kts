@@ -8,7 +8,6 @@ plugins {
 android {
     namespace = "com.example.weather_app"
     compileSdk = 33
-    ndkVersion = "21.1.6352462"  // Matching the project-level NDK version
 
     defaultConfig {
         applicationId = "com.example.weather_app"
@@ -20,8 +19,10 @@ android {
 
     buildTypes {
         release {
-            isMinifyEnabled = false
+            isMinifyEnabled = true  // Enable code shrinking
+            isShrinkResources = true  // Enable resource shrinking
             proguardFiles(getDefaultProguardFile("proguard-android-optimize.txt"), "proguard-rules.pro")
+            signingConfig = signingConfigs.getByName("debug")  // Use debug signing for now
         }
     }
 

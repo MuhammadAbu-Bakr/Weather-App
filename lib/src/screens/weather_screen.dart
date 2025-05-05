@@ -1,8 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
+import 'package:geolocator/geolocator.dart';
 import '../models/weather_model.dart';
 import '../services/weather_repository.dart';
 import '../utils/weather_theme.dart';
+import '../widgets/weather_info.dart';
 
 class WeatherScreen extends StatefulWidget {
   final WeatherRepository weatherRepository;
@@ -102,59 +104,58 @@ class _WeatherScreenState extends State<WeatherScreen> {
                   ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/forecast');
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/settings');
-                    },
-                  ),
-                ],
-              ),
-              Padding(
-                padding: const EdgeInsets.all(16.0),
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: 'Search city...',
-                    prefixIcon: const Icon(Icons.search),
-                    suffixIcon: IconButton(
-                      icon: const Icon(Icons.my_location),
-                      onPressed: _getCurrentLocationWeather,
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/forecast');
+                      },
                     ),
-                    border: OutlineInputBorder(
-                      borderRadius: BorderRadius.circular(30),
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings');
+                      },
                     ),
-                    filled: true,
-                    fillColor: Colors.white,
-                  ),
-                  onSubmitted: _searchWeather,
+                  ],
                 ),
-              ),
-              Expanded(
-                child:
-                    _isLoading
-                        ? const SpinKitPulse(color: Colors.white)
-                        : _error != null
-                        ? Center(child: Text(_error!))
-                        : _weather != null
-                        ? _buildWeatherInfo()
-                        : const Center(
-                          child: Text('Search for a city to get started'),
-                        ),
-              ),
-            ],
+                Padding(
+                  padding: const EdgeInsets.all(16.0),
+                  child: TextField(
+                    controller: _searchController,
+                    decoration: InputDecoration(
+                      hintText: 'Search city...',
+                      prefixIcon: const Icon(Icons.search),
+                      suffixIcon: IconButton(
+                        icon: const Icon(Icons.my_location),
+                        onPressed: _getCurrentLocationWeather,
+                      ),
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(30),
+                      ),
+                      filled: true,
+                      fillColor: Colors.white,
+                    ),
+                    onSubmitted: _searchWeather,
+                  ),
+                ),
+                _isLoading
+                    ? const SpinKitPulse(color: Colors.white)
+                    : _error != null
+                    ? Center(child: Text(_error!))
+                    : _weather != null
+                    ? _buildWeatherInfo()
+                    : const Center(
+                      child: Text('Search for a city to get started'),
+                    ),
+              ],
+            ),
           ),
         ),
       ),

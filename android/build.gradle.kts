@@ -1,6 +1,6 @@
 buildscript {
-    ext {
-        set("ndkVersion", "21.1.6352462")  // Using a more stable NDK version
+    extra.apply {
+        // Removing NDK version configuration as it's not needed
     }
     repositories {
         google()

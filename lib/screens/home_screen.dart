@@ -1,15 +1,15 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_spinkit/flutter_spinkit.dart';
-import '../models/weather_model.dart';
-import '../services/weather_repository.dart';
-import '../widgets/weather/weather_display.dart';
-import '../widgets/common/search_bar.dart';
+import 'src/models/weather_model.dart';
+import 'src/services/weather_repository.dart';
+import 'src/widgets/weather/weather_display.dart';
+import 'src/widgets/common/search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   final WeatherRepository weatherRepository;
 
   const HomeScreen({Key? key, required this.weatherRepository})
-    : super(key: key);
+      : super(key: key);
 
   @override
   State<HomeScreen> createState() => _HomeScreenState();
@@ -119,42 +119,43 @@ class _HomeScreenState extends State<HomeScreen> {
                 onLocationPressed: _fetchWeatherByLocation,
               ),
               Expanded(
-                child:
-                    _isLoading
-                        ? const Center(
-                          child: SpinKitPulse(color: Colors.white, size: 50.0),
-                        )
-                        : _errorMessage.isNotEmpty
+                child: _isLoading
+                    ? const Center(
+                        child: SpinKitPulse(color: Colors.white, size: 50.0),
+                      )
+                    : _errorMessage.isNotEmpty
                         ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              _errorMessage,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
+                            child: Padding(
+                              padding: const EdgeInsets.all(16.0),
+                              child: Text(
+                                _errorMessage,
+                                textAlign: TextAlign.center,
+                                style: const TextStyle(
+                                  color: Colors.white,
+                                  fontSize: 16,
+                                ),
                               ),
                             ),
-                          ),
-                        )
+                          )
                         : _weather != null
-                        ? RefreshIndicator(
-                          onRefresh: () async {
-                            if (_searchController.text.isNotEmpty) {
-                              await _searchWeather(_searchController.text);
-                            } else {
-                              await _fetchWeatherByLocation();
-                            }
-                          },
-                          child: WeatherDisplay(weather: _weather!),
-                        )
-                        : const Center(
-                          child: Text(
-                            'Search for a city to get started',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
-                        ),
+                            ? RefreshIndicator(
+                                onRefresh: () async {
+                                  if (_searchController.text.isNotEmpty) {
+                                    await _searchWeather(
+                                        _searchController.text);
+                                  } else {
+                                    await _fetchWeatherByLocation();
+                                  }
+                                },
+                                child: WeatherDisplay(weather: _weather!),
+                              )
+                            : const Center(
+                                child: Text(
+                                  'Search for a city to get started',
+                                  style: TextStyle(
+                                      color: Colors.white, fontSize: 16),
+                                ),
+                              ),
               ),
             ],
           ),

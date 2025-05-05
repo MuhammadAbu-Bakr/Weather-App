@@ -63,9 +63,24 @@ class WeatherService {
       final apiKey = dotenv.env['OPENWEATHERMAP_API_KEY'];
       if (apiKey == null) throw Exception('API key not found in .env file');
 
-      // Using the 5-day forecast endpoint with 3-hour steps
-      final url = '$baseUrl/forecast?q=$location&appid=$apiKey&units=metric';
-      final response = await http.get(Uri.parse(url));
+      // Check if location is coordinates (contains comma)
+      final Uri uri;
+      if (location.contains(',')) {
+        final coordinates = location.split(',');
+        if (coordinates.length == 2) {
+          uri = Uri.parse(
+            '$baseUrl/forecast?lat=${coordinates[0]}&lon=${coordinates[1]}&appid=$apiKey&units=metric',
+          );
+        } else {
+          throw Exception('Invalid coordinates format');
+        }
+      } else {
+        uri = Uri.parse(
+          '$baseUrl/forecast?q=$location&appid=$apiKey&units=metric',
+        );
+      }
+
+      final response = await http.get(uri);
 
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
@@ -81,7 +96,7 @@ class WeatherService {
           if (!dailyForecasts.containsKey(day)) {
             dailyForecasts[day] = [];
           }
-          dailyForecasts[day]!.add(item);
+          dailyForecasts[day]!.add(Map<String, dynamic>.from(item));
         }
 
         // Get the first forecast of each day
@@ -98,7 +113,7 @@ class WeatherService {
           'Invalid API key. Please check your OpenWeatherMap API key',
         );
       } else if (response.statusCode == 404) {
-        throw Exception('City not found. Please check the city name');
+        throw Exception('Location not found. Please check the location');
       } else {
         throw Exception('Failed to load forecast data: ${response.statusCode}');
       }

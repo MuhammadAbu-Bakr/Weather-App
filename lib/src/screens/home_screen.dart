@@ -3,7 +3,7 @@ import 'package:flutter_spinkit/flutter_spinkit.dart';
 import '../models/weather_model.dart';
 import '../services/weather_repository.dart';
 import '../widgets/weather/weather_display.dart';
-import '../widgets/common/search_bar.dart';
+import '../widgets/common/weather_search_bar.dart';
 
 class HomeScreen extends StatefulWidget {
   final WeatherRepository weatherRepository;
@@ -92,71 +92,61 @@ class _HomeScreenState extends State<HomeScreen> {
           ),
         ),
         child: SafeArea(
-          child: Column(
-            children: [
-              AppBar(
-                backgroundColor: Colors.transparent,
-                elevation: 0,
-                title: const Text('Weather App'),
-                actions: [
-                  IconButton(
-                    icon: const Icon(Icons.calendar_today),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/forecast');
-                    },
-                  ),
-                  IconButton(
-                    icon: const Icon(Icons.settings),
-                    onPressed: () {
-                      Navigator.pushNamed(context, '/settings');
-                    },
-                  ),
-                ],
-              ),
-              WeatherSearchBar(
-                controller: _searchController,
-                onSubmitted: _searchWeather,
-                onLocationPressed: _fetchWeatherByLocation,
-              ),
-              Expanded(
-                child:
-                    _isLoading
-                        ? const Center(
-                          child: SpinKitPulse(color: Colors.white, size: 50.0),
-                        )
-                        : _errorMessage.isNotEmpty
-                        ? Center(
-                          child: Padding(
-                            padding: const EdgeInsets.all(16.0),
-                            child: Text(
-                              _errorMessage,
-                              textAlign: TextAlign.center,
-                              style: const TextStyle(
-                                color: Colors.white,
-                                fontSize: 16,
-                              ),
+          child: SingleChildScrollView(
+            child: Column(
+              children: [
+                AppBar(
+                  backgroundColor: Colors.transparent,
+                  elevation: 0,
+                  title: const Text('Weather App'),
+                  actions: [
+                    IconButton(
+                      icon: const Icon(Icons.calendar_today),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/forecast');
+                      },
+                    ),
+                    IconButton(
+                      icon: const Icon(Icons.settings),
+                      onPressed: () {
+                        Navigator.pushNamed(context, '/settings');
+                      },
+                    ),
+                  ],
+                ),
+                WeatherSearchBar(
+                  controller: _searchController,
+                  onSubmitted: _searchWeather,
+                  onLocationPressed: _fetchWeatherByLocation,
+                ),
+                _isLoading
+                    ? const Center(
+                        child: SpinKitPulse(color: Colors.white, size: 50.0),
+                      )
+                    : _errorMessage.isNotEmpty
+                    ? Center(
+                        child: Padding(
+                          padding: const EdgeInsets.all(16.0),
+                          child: Text(
+                            _errorMessage,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(
+                              color: Colors.white,
+                              fontSize: 16,
                             ),
                           ),
-                        )
-                        : _weather != null
-                        ? RefreshIndicator(
-                          onRefresh: () async {
-                            if (_searchController.text.isNotEmpty) {
-                              await _searchWeather(_searchController.text);
-                            } else {
-                              await _fetchWeatherByLocation();
-                            }
-                          },
-                          child: WeatherDisplay(weather: _weather!),
-                        )
-                        : const Center(
-                          child: Text(
-                            'Search for a city to get started',
-                            style: TextStyle(color: Colors.white, fontSize: 16),
-                          ),
                         ),
-              ),
-            ],
+                      )
+                    : _weather != null
+                    ? WeatherDisplay(weather: _weather!)
+                    : const Center(
+                        child: Text(
+                          'Search for a city to get started',
+                          style: TextStyle(color: Colors.white, fontSize: 16),
+                        ),
+                      ),
+              ],
+            ),
           ),
         ),
       ),

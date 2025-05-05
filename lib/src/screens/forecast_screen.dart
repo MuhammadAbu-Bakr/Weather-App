@@ -19,6 +19,7 @@ class _ForecastScreenState extends State<ForecastScreen> {
   List<WeatherForecast> _forecasts = [];
   bool _isLoading = false;
   String? _error;
+  String? _currentCity;
 
   @override
   void initState() {
@@ -33,7 +34,7 @@ class _ForecastScreenState extends State<ForecastScreen> {
     });
 
     try {
-      final forecasts = await widget.weatherRepository.getForecast();
+      final forecasts = await widget.weatherRepository.getForecast(_currentCity);
       setState(() {
         _forecasts = forecasts;
         _isLoading = false;
@@ -60,87 +61,111 @@ class _ForecastScreenState extends State<ForecastScreen> {
       ),
       body: RefreshIndicator(
         onRefresh: _loadForecast,
-        child:
-            _isLoading
-                ? const Center(child: CircularProgressIndicator())
-                : _error != null
-                ? Center(child: Text(_error!))
-                : ListView.builder(
-                  padding: const EdgeInsets.all(16),
-                  itemCount: _forecasts.length,
-                  itemBuilder: (context, index) {
-                    final forecast = _forecasts[index];
-                    return Card(
-                      margin: const EdgeInsets.only(bottom: 16),
-                      child: Padding(
-                        padding: const EdgeInsets.all(16),
-                        child: Column(
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Text(
-                                  DateFormat(
-                                    'EEEE, MMM d',
-                                  ).format(forecast.date),
-                                  style: Theme.of(context).textTheme.titleLarge,
-                                ),
-                                Image.network(
-                                  forecast.iconUrl,
-                                  width: 50,
-                                  height: 50,
-                                ),
-                              ],
-                            ),
-                            const SizedBox(height: 16),
-                            Row(
-                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                              children: [
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      settings.formatTemperature(
-                                        forecast.temperature,
-                                      ),
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.headlineMedium,
-                                    ),
-                                    Text(
-                                      forecast.description.toUpperCase(),
-                                      style:
-                                          Theme.of(
-                                            context,
-                                          ).textTheme.titleMedium,
-                                    ),
-                                  ],
-                                ),
-                                Column(
-                                  crossAxisAlignment: CrossAxisAlignment.end,
-                                  children: [
-                                    Text(
-                                      'Humidity: ${forecast.humidity}%',
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                    Text(
-                                      'Wind: ${forecast.windSpeed.toStringAsFixed(1)} m/s',
-                                      style:
-                                          Theme.of(context).textTheme.bodyLarge,
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          ],
-                        ),
+        child: _isLoading
+            ? const Center(child: CircularProgressIndicator())
+            : _error != null
+                ? Center(
+                    child: Padding(
+                      padding: const EdgeInsets.all(16.0),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            _error!,
+                            textAlign: TextAlign.center,
+                            style: const TextStyle(color: Colors.red),
+                          ),
+                          const SizedBox(height: 16),
+                          ElevatedButton(
+                            onPressed: _loadForecast,
+                            child: const Text('Try Again'),
+                          ),
+                        ],
                       ),
-                    );
-                  },
-                ),
+                    ),
+                  )
+                : _forecasts.isEmpty
+                    ? const Center(child: Text('No forecast data available'))
+                    : ListView.builder(
+                        padding: const EdgeInsets.all(16),
+                        itemCount: _forecasts.length,
+                        itemBuilder: (context, index) {
+                          final forecast = _forecasts[index];
+                          return Card(
+                            margin: const EdgeInsets.only(bottom: 16),
+                            child: Padding(
+                              padding: const EdgeInsets.all(16),
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                children: [
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Text(
+                                        DateFormat('EEEE, MMM d')
+                                            .format(forecast.date),
+                                        style:
+                                            Theme.of(context).textTheme.titleLarge,
+                                      ),
+                                      Image.network(
+                                        forecast.iconUrl,
+                                        width: 50,
+                                        height: 50,
+                                      ),
+                                    ],
+                                  ),
+                                  const SizedBox(height: 16),
+                                  Row(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    children: [
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        children: [
+                                          Text(
+                                            settings.formatTemperature(
+                                              forecast.temperature,
+                                            ),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .headlineMedium,
+                                          ),
+                                          Text(
+                                            forecast.description.toUpperCase(),
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .titleMedium,
+                                          ),
+                                        ],
+                                      ),
+                                      Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.end,
+                                        children: [
+                                          Text(
+                                            'Humidity: ${forecast.humidity}%',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                          Text(
+                                            'Wind: ${forecast.windSpeed.toStringAsFixed(1)} m/s',
+                                            style: Theme.of(context)
+                                                .textTheme
+                                                .bodyLarge,
+                                          ),
+                                        ],
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          );
+                        },
+                      ),
       ),
     );
   }

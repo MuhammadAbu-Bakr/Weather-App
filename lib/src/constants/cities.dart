@@ -347,7 +347,6 @@ class Cities {
     'Ludhewala Waraich',
     'Renala Khurd',
     'Kandhkot',
-    'Dera Allah Yar',
-    ,
+    'Dera Allah Yar'
   ];
 }

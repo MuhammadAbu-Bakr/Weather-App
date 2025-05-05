@@ -13,23 +13,36 @@ class WeatherRepository {
   }
 
   Future<WeatherModel> getWeatherByCurrentLocation() async {
-    final position = await _locationService.getCurrentLocation();
-    final data = await _weatherService.getWeatherByLocation(
-      position.latitude,
-      position.longitude,
-    );
-    return WeatherModel.fromJson(data);
+    try {
+      final position = await _getCurrentPosition();
+      final data = await _weatherService.getWeatherByLocation(
+        position.latitude,
+        position.longitude,
+      );
+      return WeatherModel.fromJson(data);
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<List<WeatherForecast>> getForecast() async {
-    final position = await _locationService.getCurrentLocation();
-    final data = await _weatherService.getForecast(
-      '${position.latitude},${position.longitude}',
-    );
-    return data.map((item) => WeatherForecast.fromJson(item)).toList();
+  Future<List<WeatherForecast>> getForecast([String? city]) async {
+    try {
+      List<Map<String, dynamic>> data;
+      if (city != null) {
+        data = await _weatherService.getForecast(city);
+      } else {
+        final position = await _getCurrentPosition();
+        data = await _weatherService.getForecast(
+          '${position.latitude},${position.longitude}',
+        );
+      }
+      return data.map((item) => WeatherForecast.fromJson(item)).toList();
+    } catch (e) {
+      rethrow;
+    }
   }
 
-  Future<Position> getCurrentLocation() async {
+  Future<Position> _getCurrentPosition() async {
     bool serviceEnabled;
     LocationPermission permission;
 
