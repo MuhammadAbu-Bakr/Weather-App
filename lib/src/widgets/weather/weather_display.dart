@@ -1,45 +1,45 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_svg/flutter_svg.dart';
-import '../../../models/weather_model.dart';
-import '../../utils/helpers/weather_helper.dart';
+import 'package:provider/provider.dart';
+import '../../models/weather_model.dart';
+import '../../providers/settings_provider.dart';
+import 'weather_detail_card.dart';
 
 class WeatherDisplay extends StatelessWidget {
-  final WeatherData weather;
+  final WeatherModel weather;
 
-  const WeatherDisplay({
-    Key? key,
-    required this.weather,
-  }) : super(key: key);
+  const WeatherDisplay({Key? key, required this.weather}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final settings = context.watch<SettingsProvider>();
+
     return Column(
       children: [
         const SizedBox(height: 16),
-        SvgPicture.asset(
-          WeatherHelper.getWeatherIcon(weather.iconCode),
+        Image.network(
+          weather.iconUrl,
           width: 120,
           height: 120,
           color: Theme.of(context).primaryColor,
         ),
         const SizedBox(height: 16),
         Text(
-          '${weather.temperature.round()}°',
-          style: Theme.of(context).textTheme.headline2?.copyWith(
-                fontWeight: FontWeight.w300,
-              ),
+          settings.formatTemperature(weather.temperature),
+          style: Theme.of(
+            context,
+          ).textTheme.displayMedium?.copyWith(fontWeight: FontWeight.w300),
         ),
         const SizedBox(height: 8),
         Text(
-          weather.description.capitalize(),
-          style: Theme.of(context).textTheme.headline5?.copyWith(
-                fontWeight: FontWeight.bold,
-              ),
+          weather.description.toUpperCase(),
+          style: Theme.of(
+            context,
+          ).textTheme.headlineSmall?.copyWith(fontWeight: FontWeight.bold),
         ),
         const SizedBox(height: 8),
         Text(
-          'Feels like ${weather.feelsLike.round()}°',
-          style: Theme.of(context).textTheme.subtitle1,
+          'Feels like ${settings.formatTemperature(weather.feelsLike)}',
+          style: Theme.of(context).textTheme.titleMedium,
         ),
         const SizedBox(height: 24),
         Padding(
@@ -61,7 +61,7 @@ class WeatherDisplay extends StatelessWidget {
               WeatherDetailCard(
                 icon: Icons.air,
                 title: 'Wind Speed',
-                value: '${weather.windSpeed.toStringAsFixed(1)} km/h',
+                value: '${weather.windSpeed.toStringAsFixed(1)} m/s',
                 color: Colors.green,
               ),
               WeatherDetailCard(
@@ -73,7 +73,7 @@ class WeatherDisplay extends StatelessWidget {
               WeatherDetailCard(
                 icon: Icons.thermostat,
                 title: 'Feels Like',
-                value: '${weather.feelsLike.round()}°',
+                value: settings.formatTemperature(weather.feelsLike),
                 color: Colors.red,
               ),
             ],

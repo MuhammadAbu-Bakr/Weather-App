@@ -1,3 +1,17 @@
+buildscript {
+    ext {
+        set("ndkVersion", "21.1.6352462")  // Using a more stable NDK version
+    }
+    repositories {
+        google()
+        mavenCentral()
+    }
+    dependencies {
+        classpath("com.android.tools.build:gradle:7.3.0")
+        classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.7.10")
+    }
+}
+
 allprojects {
     repositories {
         google()

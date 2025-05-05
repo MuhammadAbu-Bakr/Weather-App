@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   ),
                 ],
               ),
-              SearchBar(
+              WeatherSearchBar(
                 controller: _searchController,
                 onSubmitted: _searchWeather,
                 onLocationPressed: _fetchWeatherByLocation,

@@ -14,10 +14,10 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.backgroundLight,
       cardColor: AppColors.cardLight,
       textTheme: const TextTheme(
-        headline1: AppTextStyles.headline1,
-        headline2: AppTextStyles.headline2,
-        bodyText1: AppTextStyles.bodyText1,
-        bodyText2: AppTextStyles.bodyText2,
+        displayLarge: AppTextStyles.headline1,
+        displayMedium: AppTextStyles.headline2,
+        bodyLarge: AppTextStyles.bodyText1,
+        bodyMedium: AppTextStyles.bodyText2,
       ),
       appBarTheme: const AppBarTheme(
         elevation: 0,
@@ -38,10 +38,14 @@ class AppTheme {
       scaffoldBackgroundColor: AppColors.backgroundDark,
       cardColor: AppColors.cardDark,
       textTheme: const TextTheme(
-        headline1: AppTextStyles.headline1.copyWith(color: AppColors.textDark),
-        headline2: AppTextStyles.headline2.copyWith(color: AppColors.textDark),
-        bodyText1: AppTextStyles.bodyText1.copyWith(color: AppColors.textDark),
-        bodyText2: AppTextStyles.bodyText2.copyWith(color: AppColors.textDark),
+        displayLarge: AppTextStyles.headline1.copyWith(
+          color: AppColors.textDark,
+        ),
+        displayMedium: AppTextStyles.headline2.copyWith(
+          color: AppColors.textDark,
+        ),
+        bodyLarge: AppTextStyles.bodyText1.copyWith(color: AppColors.textDark),
+        bodyMedium: AppTextStyles.bodyText2.copyWith(color: AppColors.textDark),
       ),
       appBarTheme: const AppBarTheme(
         elevation: 0,

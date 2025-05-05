@@ -29,7 +29,7 @@ class AppTextStyles {
     return TextStyle(
       fontSize: 72,
       fontWeight: FontWeight.w300,
-      color: Theme.of(context).textTheme.headline1?.color,
+      color: Theme.of(context).textTheme.displayLarge?.color,
     );
   }
 
@@ -37,7 +37,7 @@ class AppTextStyles {
     return TextStyle(
       fontSize: 20,
       fontWeight: FontWeight.bold,
-      color: Theme.of(context).textTheme.headline2?.color,
+      color: Theme.of(context).textTheme.displayMedium?.color,
       letterSpacing: 1.2,
     );
   }
@@ -45,7 +45,7 @@ class AppTextStyles {
   static TextStyle weatherDetailLabel(BuildContext context) {
     return TextStyle(
       fontSize: 14,
-      color: Theme.of(context).textTheme.caption?.color,
+      color: Theme.of(context).textTheme.bodySmall?.color,
     );
   }
 
@@ -53,7 +53,7 @@ class AppTextStyles {
     return TextStyle(
       fontSize: 18,
       fontWeight: FontWeight.bold,
-      color: Theme.of(context).textTheme.headline2?.color,
+      color: Theme.of(context).textTheme.displayMedium?.color,
     );
   }
 }

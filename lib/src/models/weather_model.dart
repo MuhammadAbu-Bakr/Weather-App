@@ -1,57 +1,65 @@
-class WeatherData {
-  final String city;
-  final int temperature;
-  final int feelsLike;
-  final String condition;
+class WeatherModel {
+  final String cityName;
+  final double temperature;
+  final double feelsLike;
   final String description;
+  final String icon;
   final int humidity;
   final double windSpeed;
   final int pressure;
-  final String iconCode;
 
-  WeatherData({
-    required this.city,
+  WeatherModel({
+    required this.cityName,
     required this.temperature,
     required this.feelsLike,
-    required this.condition,
     required this.description,
+    required this.icon,
     required this.humidity,
     required this.windSpeed,
     required this.pressure,
-    required this.iconCode,
   });
 
-  String get weatherIcon {
-    switch (condition.toLowerCase()) {
-      case 'clear':
-        return 'assets/sunny.svg';
-      case 'clouds':
-        return 'assets/cloudy.svg';
-      case 'rain':
-        return 'assets/rainy.svg';
-      case 'snow':
-        return 'assets/snowy.svg';
-      case 'thunderstorm':
-        return 'assets/thunder.svg';
-      default:
-        return 'assets/partly_cloudy.svg';
-    }
+  factory WeatherModel.fromJson(Map<String, dynamic> json) {
+    return WeatherModel(
+      cityName: json['name'],
+      temperature: json['main']['temp'].toDouble(),
+      feelsLike: json['main']['feels_like'].toDouble(),
+      description: json['weather'][0]['description'],
+      icon: json['weather'][0]['icon'],
+      humidity: json['main']['humidity'],
+      windSpeed: json['wind']['speed'].toDouble(),
+      pressure: json['main']['pressure'],
+    );
   }
 
-  Color get backgroundColor {
-    switch (condition.toLowerCase()) {
-      case 'clear':
-        return Colors.amber.shade100;
-      case 'clouds':
-        return Colors.blueGrey.shade100;
-      case 'rain':
-        return Colors.blue.shade100;
-      case 'snow':
-        return Colors.blue.shade50;
-      case 'thunderstorm':
-        return Colors.indigo.shade100;
-      default:
-        return Colors.grey.shade100;
-    }
+  String get iconUrl => 'https://openweathermap.org/img/wn/$icon@2x.png';
+}
+
+class WeatherForecast {
+  final DateTime date;
+  final double temperature;
+  final String description;
+  final String icon;
+  final double windSpeed;
+  final int humidity;
+
+  WeatherForecast({
+    required this.date,
+    required this.temperature,
+    required this.description,
+    required this.icon,
+    required this.windSpeed,
+    required this.humidity,
+  });
+
+  factory WeatherForecast.fromJson(Map<String, dynamic> json) {
+    return WeatherForecast(
+      date: DateTime.fromMillisecondsSinceEpoch(json['dt'] * 1000),
+      temperature: json['main']['temp'].toDouble(),
+      description: json['weather'][0]['description'],
+      icon: json['weather'][0]['icon'],
+      windSpeed: json['wind']['speed'].toDouble(),
+      humidity: json['main']['humidity'],
+    );
   }
 }

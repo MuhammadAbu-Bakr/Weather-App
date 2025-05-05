@@ -1,8 +1,67 @@
+import 'package:geolocator/geolocator.dart';
+import '../models/weather_model.dart';
+import 'weather_service.dart';
+
+class WeatherRepository {
+  final WeatherService _weatherService = WeatherService();
+
+  Future<WeatherModel> getWeatherByCity(String city) async {
+    final data = await _weatherService.getWeatherByCity(city);
+    return WeatherModel.fromJson(data);
+  }
+
+  Future<WeatherModel> getWeatherByCurrentLocation() async {
+    final position = await getCurrentLocation();
+    final data = await _weatherService.getWeatherByLocation(
+      position.latitude,
+      position.longitude,
+    );
+    return WeatherModel.fromJson(data);
+  }
+
+  Future<Position> getCurrentLocation() async {
+    bool serviceEnabled;
+    LocationPermission permission;
+
+    serviceEnabled = await Geolocator.isLocationServiceEnabled();
+    if (!serviceEnabled) {
+      throw Exception('Location services are disabled');
+    }
+
+    permission = await Geolocator.checkPermission();
+    if (permission == LocationPermission.denied) {
+      permission = await Geolocator.requestPermission();
+      if (permission == LocationPermission.denied) {
+        throw Exception('Location permissions are denied');
+      }
+    }
+
+    if (permission == LocationPermission.deniedForever) {
+      throw Exception('Location permissions are permanently denied');
+    }
+
+    return await Geolocator.getCurrentPosition();
+  }
+
+  Future<List<WeatherForecast>> getFiveDayForecast(
+    double latitude,
+    double longitude,
+  ) async {
+    final data = await _weatherService.getForecast(
+      '$latitude,$longitude',
+      days: 5,
+    );
+    return data.map((item) => WeatherForecast.fromJson(item)).toList();
+  }
+}
+
 class AppConstants {
-  static const String openWeatherApiKey = 'YOUR_API_KEY'; // Replace with your actual API key
-  static const String weatherBaseUrl = 'https://api.openweathermap.org/data/2.5';
+  static const String openWeatherApiKey =
+      'YOUR_API_KEY'; // Replace with your actual API key
+  static const String weatherBaseUrl =
+      'https://api.openweathermap.org/data/2.5';
   static const String weatherIconUrl = 'https://openweathermap.org/img/wn';
-  
+
   // Weather condition codes mapping
   static Map<String, String> weatherConditions = {
     '01d': 'clear_sky',
@@ -19,6 +78,5 @@ class AppConstants {
     '02n': 'few_clouds_night',
     '03n': 'scattered_clouds_night',
     '04n': 'broken_clouds_night',
-    
   };
 }
